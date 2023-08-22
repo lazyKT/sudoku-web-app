@@ -1,28 +1,9 @@
 import Playground from '@/components/playground';
-import { Puzzle } from '@/utils/type-def';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Suspense } from 'react';
 
 
 
-async function getData() {
-  console.log('running getData()');
-  const supabase = createClientComponentClient();
-  const { data: puzzles } = await supabase.from('sudoku_puzzles').select().limit(1);
-  if (puzzles && puzzles.length > 0) {
-    const puzzle: Puzzle = {
-      id: puzzles[0]['id'],
-      puzzle: puzzles[0]['puzzle'],
-      difficulty: puzzles[0]['difficulty']
-    }
-    return puzzle;
-  }
-  return undefined;
-}
-
 export default async function Page() {
-  const data = await getData();
-  console.log('data', data);
   return (
     <div>
       <Suspense fallback={<div>Loading ...</div>}>

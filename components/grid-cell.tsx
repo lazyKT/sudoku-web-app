@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef } from "react";
 interface IGridCellProps {
   position: ICell;
   active: ICell | null;
-  invalidCells?: ICell[];
+  invalidCells?: string[];
   handleClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
   sudokuValue: ISudokuValue;
@@ -61,7 +61,7 @@ const GridCell = ({
     const { x, y } = position;
     if (cellRef.current != null) {
       if (sudokuValue.mutable) {
-        const invalidCell = invalidCells.find(cell => cell.x === x && cell.y === y);
+        const invalidCell = invalidCells.find(val => val === `${x}${y}`);
         const isActive = x === active?.x && y === active?.y;
         if (invalidCell) {
           cellRef.current.style.background = isActive ? '#FF0000aa' : '#FF0000';

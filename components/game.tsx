@@ -1,9 +1,9 @@
 'use client';
 
-import { getInvalidCells, initEmptySudokuGame, validateSudokuCellValue } from "@/utils/game-utils";
+import { initEmptySudokuGame, validateSudokuValues } from "@/utils/game-utils";
 import { areCellsEqual } from "@/utils/grid-utils";
 import { ICell, ISudokuBoard, ISudokuValue } from "@/utils/type-def";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameControl from "./game-control";
 import SudokuGrid from "./sudoku-grid";
 
@@ -15,20 +15,11 @@ const Game = ({ puzzle }: IGameProps) => {
   const [sudokuValues, setSudokuValues] = useState<ISudokuBoard>(
     () => puzzle ?? initEmptySudokuGame()
   );
-  const [invalidCells, setInvalidCells] = useState<ICell[]>([]);
+  const [invalidCells, setInvalidCells] = useState<string[]>([]);
   const [activeCell, setActiveCell] = useState<ICell | null>(null);
 
   const fillValueInSudokuBoard = (value: string) => {
     if (activeCell != null) {
-
-      const _invalidCells = getInvalidCells(value, activeCell, sudokuValues);
-      if (_invalidCells.length > 0) {
-        setInvalidCells([
-          ...invalidCells,
-          ..._invalidCells,
-          activeCell
-        ]);
-      }
       const updatedSudokuValues = sudokuValues.map((row: ISudokuValue[], idx: number) => {
         if (idx === activeCell.x) {
           return row.map((col, cIdx) => cIdx === activeCell.y ? {...col, value} : col)
@@ -48,6 +39,11 @@ const Game = ({ puzzle }: IGameProps) => {
       setActiveCell(areCellsEqual(cell, activeCell) ? null : cell);
     }
   }
+
+  useEffect(() => {
+    const { invalidCells: incorrectCells } = validateSudokuValues(sudokuValues);
+    setInvalidCells(incorrectCells);
+  }, [sudokuValues]);
 
   return (
     <div className='w-full flex flex-wrap justify-center items-center'>

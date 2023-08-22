@@ -4,7 +4,7 @@ import GridCell from "./grid-cell";
 type SudokuGridProps = {
   activeCell: ICell | null;
   sudokuValues: ISudokuValue[][];
-  invalidCells: ICell[];
+  invalidCells: string[];
   handleOnCellClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
 }
@@ -16,7 +16,6 @@ const SudokuGrid = ({
   handleOnChange,
   handleOnCellClick,
 }: SudokuGridProps) => {
-
   return (
     <div className='m-4 w-full max-w-450 flex flex-wrap border-l-4 border-t-4 border-slate-600'>
       {
@@ -31,7 +30,7 @@ const SudokuGrid = ({
                   handleClick={handleOnCellClick}
                   sudokuValue={sudokuValues[row][col]}
                   handleOnChange={handleOnChange}
-                  // invalidCells={invalidCells}
+                  invalidCells={invalidCells}
                 />
               )
             )
