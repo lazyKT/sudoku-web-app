@@ -2,16 +2,16 @@
 
 import { validateSudokuCellValue } from "@/utils/game-utils";
 import { shouldHighlightCell } from "@/utils/grid-utils";
-import { ICell } from "@/utils/type-def";
+import { ICell, ISudokuValue } from "@/utils/type-def";
 import { useCallback, useEffect, useRef } from "react";
 
 interface IGridCellProps {
   position: ICell;
   active: ICell | null;
-  invalidCells: ICell[];
+  invalidCells?: ICell[];
   handleClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
-  value: string;
+  sudokuValue: ISudokuValue;
 }
 
 const GridCell = ({
@@ -19,8 +19,8 @@ const GridCell = ({
   active,
   handleClick,
   handleOnChange,
-  value,
-  invalidCells
+  sudokuValue,
+  invalidCells=[]
 }: IGridCellProps) => {
 
   const cellRef = useRef<HTMLDivElement>(null);
@@ -45,24 +45,39 @@ const GridCell = ({
     }
   }
 
+  const handleCellOnClick = () => {
+    if (sudokuValue.mutable) {
+      handleClick(position);
+    }
+  }
+
+  /**
+   * !!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!
+   * ==== MOVE UI UPDATES TO SERVER SIDE FROM THE BELOW CALLBACK ====
+   * !!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!
+   */
   const updateCellStyles = useCallback(() => {
     // update cell styles based on position
     const { x, y } = position;
     if (cellRef.current != null) {
-      const invalidCell = invalidCells.find(cell => cell.x === x && cell.y === y);
-      const isActive = x === active?.x && y === active?.y;
-      console.log('invalidCells', invalidCells);
-      if (invalidCell) {
-        cellRef.current.style.background = isActive ? '#FF0000aa' : '#FF0000';
-      } else if (isActive) {
-        cellRef.current.style.background = '#FF634766';
+      if (sudokuValue.mutable) {
+        const invalidCell = invalidCells.find(cell => cell.x === x && cell.y === y);
+        const isActive = x === active?.x && y === active?.y;
+        if (invalidCell) {
+          cellRef.current.style.background = isActive ? '#FF0000aa' : '#FF0000';
+        } else if (isActive) {
+          cellRef.current.style.background = '#FF634766';
+        } else {
+          // highlight cell with bg color if it in the same group as selected cell or has same x or y axis as selected cell
+          // this is to highlight affected sudoku cells for the user-selected cell
+          cellRef.current.style.background = shouldHighlightCell(position, active) ? '#FF7F5022' : '';
+        }
       } else {
-        // highlight cell with bg color if it in the same group as selected cell or has same x or y axis as selected cell
-        // this is to highlight affected sudoku cells for the user-selected cell
-        cellRef.current.style.background = shouldHighlightCell(position, active) ? '#FF7F5022' : '';
+        cellRef.current.style.background = 'gray';
       }
+      
     }
-  }, [active, position, invalidCells]);
+  }, [active, position, invalidCells, sudokuValue]);
 
   useEffect(() => {
     updateCellStyles();
@@ -73,11 +88,11 @@ const GridCell = ({
     <div
       ref={cellRef}
       className={gridCellStyling()}
-      onClick={() => handleClick(position)}
+      onClick={handleCellOnClick}
       tabIndex={0}
       onKeyUp={(e) => handleKeyUp(e)}
     >
-      {value.trim() === '' ? '' : value}
+      {sudokuValue.value}
     </div>
   )
 }

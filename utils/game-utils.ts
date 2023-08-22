@@ -2,14 +2,17 @@
  * This file contains fuctions related to Sudoku-game logics
  */
 
-import { ICell } from "./type-def";
+import { ICell, ISudokuValue } from "./type-def";
 
-export const initEmptySudokuGame = (): string[][] => {
-  const twoD9x9Array: string[][] = [];
+export const initEmptySudokuGame = (): ISudokuValue[][] => {
+  const twoD9x9Array: ISudokuValue[][] = [];
   for (let i = 0; i < 9; i ++) {
     twoD9x9Array[i] = [];
     for (let j = 0; j < 9; j++) {
-      twoD9x9Array[i][j] = ' ';
+      twoD9x9Array[i][j] = {
+        value: ' ',
+        mutable: true
+      };
     }
   }
   return twoD9x9Array;
@@ -49,13 +52,16 @@ export const validateSudokuCellValue = (
 export const getInvalidCells = (
   value: string,
   currentCell: ICell,
-  valuesInBoard: string[][]
+  sudokuValues: ISudokuValue[][]
 ): ICell[] => {
 
   if (value.trim() === '') {
     return [];
   }
 
+  const valuesInBoard = sudokuValues.map(
+    s => s.map(sv => sv.value)
+  );
   const invalidCells: ICell[] = [];
   const { x, y } = currentCell;
 

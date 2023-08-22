@@ -1,9 +1,9 @@
-import { ICell } from "@/utils/type-def";
+import { ICell, ISudokuValue } from "@/utils/type-def";
 import GridCell from "./grid-cell";
 
 type SudokuGridProps = {
   activeCell: ICell | null;
-  sudokuValues: string[][];
+  sudokuValues: ISudokuValue[][];
   invalidCells: ICell[];
   handleOnCellClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
@@ -11,10 +11,10 @@ type SudokuGridProps = {
 
 const SudokuGrid = ({
   activeCell,
-  handleOnCellClick,
   sudokuValues,
+  invalidCells,
   handleOnChange,
-  invalidCells
+  handleOnCellClick,
 }: SudokuGridProps) => {
 
   return (
@@ -29,9 +29,9 @@ const SudokuGrid = ({
                   position={{x: row, y: col}}
                   active={activeCell}
                   handleClick={handleOnCellClick}
-                  value={sudokuValues[row][col]}
+                  sudokuValue={sudokuValues[row][col]}
                   handleOnChange={handleOnChange}
-                  invalidCells={invalidCells}
+                  // invalidCells={invalidCells}
                 />
               )
             )
