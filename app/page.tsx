@@ -1,31 +1,40 @@
-import Link from 'next/link';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import './globals.css';
 
 export default function Page() {
+  const router = useRouter();
+  const startNewGame = (difficulty?: number) => {
+    localStorage.removeItem('progress');
+    localStorage.removeItem('game-difficulty');
+    router.push(`/play${difficulty ? '?mode='+difficulty: ''}`);
+  }
+
   return (
     <div className='flex flex-col justify-center items-center flex-wrap bg-white-500 shadow-lg shadow-black-500/50 p-4 w-full max-w-450'>
       <h1 className='text-2xl'>Play Sudoku anywhere ...</h1>
       <p className='my-2 text-sm'>Select Difficulty:</p>
-      <Link 
-        href='/play?mode=1' 
+      <button 
+        onClick={() => startNewGame(1)}
         className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
         Easy
-      </Link>
-      <Link 
-        href='/play?mode=2' 
+      </button>
+      <button 
+        onClick={() => startNewGame(2)}
         className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
         Medium
-      </Link>
-      <Link 
-        href='/play?mode=3' 
+      </button>
+      <button 
+        onClick={() => startNewGame(3)} 
         className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
         Hard
-      </Link>
-      <Link 
-        href='/play' 
+      </button>
+      <button 
+        onClick={() => startNewGame()} 
         className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
         Random
-      </Link>
+      </button>
     </div>
   )
 }

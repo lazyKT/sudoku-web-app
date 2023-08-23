@@ -3,10 +3,10 @@
 import { convertToNumericValues, convertToSudokuValues, initEmptySudokuGame, solveSudoku, validateSudokuValues } from "@/utils/game-utils";
 import { areCellsEqual } from "@/utils/grid-utils";
 import { ICell, ISudokuBoard, ISudokuValue } from "@/utils/type-def";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import GameControl from "./game-control";
 import GameInstruction from "./game-instruction";
+import NewGameDialog from "./new-game-dialog";
 import SudokuGrid from "./sudoku-grid";
 
 type IGameProps = {
@@ -14,11 +14,13 @@ type IGameProps = {
 }
 
 const Game = ({ puzzle }: IGameProps) => {
-  const router = useRouter();
   const [sudokuValues, setSudokuValues] = useState<ISudokuBoard>();
   const [invalidCells, setInvalidCells] = useState<number[]>([]);
   const [activeCell, setActiveCell] = useState<ICell | null>(null);
-  const [showInstruction, setShowInstruction] = useState<boolean>(true);
+  const [showInstruction, setShowInstruction] = useState<boolean>(false);
+  const [showNewGameDialog, setShowNewGameDialog] = useState<boolean>(false);
+  // this state is to inform Timer component to restart timer coz new game has started!!!
+  const [hasNewGameStarted, setHasNewGameStarted] = useState<boolean>(false);
 
   const fillValueInSudokuBoard = (value: string) => {
     if (activeCell != null) {
@@ -40,12 +42,6 @@ const Game = ({ puzzle }: IGameProps) => {
     } else {
       setActiveCell(areCellsEqual(cell, activeCell) ? null : cell);
     }
-  }
-
-  const handleNewGameClick = () => {
-    localStorage.removeItem('progress');
-    localStorage.removeItem('game-difficulty');
-    router.refresh();
   }
 
   const handleGetAnswerClick = () => {
@@ -88,11 +84,17 @@ const Game = ({ puzzle }: IGameProps) => {
           <GameControl 
             handleNumberClick={(n: number) => fillValueInSudokuBoard(n.toString())}
             handleDeleteClick={() => fillValueInSudokuBoard(' ')}
-            handleNewGameClick={handleNewGameClick}
+            handleNewGameClick={() => setShowNewGameDialog(true)}
             handleGetAnswerClick={handleGetAnswerClick}
           />
           {
             showInstruction && <GameInstruction onDismiss={() => setShowInstruction(!showInstruction)}/>
+          }
+          {
+            showNewGameDialog && 
+              <NewGameDialog 
+                cancelClick={() => setShowNewGameDialog(false)}
+              />
           }
         </>
       )}

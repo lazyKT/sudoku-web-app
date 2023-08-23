@@ -40,7 +40,7 @@ const GameControl = ({
         className={`${cellStyle} bg-lime-light col-span-3 text-white border-none hover:bg-lime`}
         onClick={handleGetAnswerClick}
       >
-        Get answers
+        Solve for me
       </div>
       <div
         className={`${cellStyle} bg-primary-light col-span-6 text-white border-none hover:bg-primary`}

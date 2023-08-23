@@ -91,7 +91,7 @@ let executionCount = 1;
  * @param sudokuValues string values on Sudoku UI grid
  */
 export const solveSudoku = (board: number[][]) => {
-  if (executionCount > 10000000) {
+  if (executionCount > 1000000000) {
     throw new Error('Critical Error! Detected infinite loop or cannot solve the puzzle!');
   }
   executionCount++;
