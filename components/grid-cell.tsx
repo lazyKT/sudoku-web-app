@@ -1,6 +1,5 @@
 'use client';
 
-import { validateSudokuCellValue } from "@/utils/game-utils";
 import { shouldHighlightCell } from "@/utils/grid-utils";
 import { ICell, ISudokuValue } from "@/utils/type-def";
 import { useCallback, useEffect, useRef } from "react";
@@ -8,7 +7,7 @@ import { useCallback, useEffect, useRef } from "react";
 interface IGridCellProps {
   position: ICell;
   active: ICell | null;
-  invalidCells?: string[];
+  invalidCells?: number[];
   handleClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
   sudokuValue: ISudokuValue;
@@ -60,22 +59,18 @@ const GridCell = ({
     // update cell styles based on position
     const { x, y } = position;
     if (cellRef.current != null) {
-      if (sudokuValue.mutable) {
-        const invalidCell = invalidCells.find(val => val === `${x}${y}`);
-        const isActive = x === active?.x && y === active?.y;
-        if (invalidCell) {
-          cellRef.current.style.background = isActive ? '#FF0000aa' : '#FF0000';
-        } else if (isActive) {
-          cellRef.current.style.background = '#FF634766';
-        } else {
-          // highlight cell with bg color if it in the same group as selected cell or has same x or y axis as selected cell
-          // this is to highlight affected sudoku cells for the user-selected cell
-          cellRef.current.style.background = shouldHighlightCell(position, active) ? '#FF7F5022' : '';
-        }
+      const invalidCell = invalidCells.find(val => val === (9 * x) + y);
+      const isActive = x === active?.x && y === active?.y;
+      if (invalidCell) {
+        cellRef.current.style.background = isActive ? '#FF0000aa' : '#FF0000';
+      } else if (isActive) {
+        cellRef.current.style.background = '#a0b9c3bf';
       } else {
-        cellRef.current.style.background = 'gray';
+        // highlight cell with bg color if it in the same group as selected cell or has same x or y axis as selected cell
+        // this is to highlight affected sudoku cells for the user-selected cell
+        cellRef.current.style.background = shouldHighlightCell(position, active) ? '#a0b9c355' : '';
       }
-      
+      cellRef.current.style.color = sudokuValue?.mutable ? 'dodgerblue' : 'black';
     }
   }, [active, position, invalidCells, sudokuValue]);
 

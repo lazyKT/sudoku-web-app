@@ -4,7 +4,7 @@ import GridCell from "./grid-cell";
 type SudokuGridProps = {
   activeCell: ICell | null;
   sudokuValues: ISudokuValue[][];
-  invalidCells: string[];
+  invalidCells: number[];
   handleOnCellClick: (cell: ICell) => void;
   handleOnChange: (val: string) => void;
 }

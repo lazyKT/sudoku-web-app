@@ -22,5 +22,5 @@ export type SudokuValidationResult = {
   // to eliminate duplicates values from invalidCells array easily
   // if I were use ICell, I will need to compare ICell objects deeply to eliminate duplicates
   // and that add more boilerplates to the source code
-  invalidCells: string[]
+  invalidCells: number[]
 }
