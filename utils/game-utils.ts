@@ -53,17 +53,6 @@ export const validateSudokuValues = (
   }
 }
 
-const convertToNumericValues = (puzzle: ISudokuBoard): number[][] => {
-  const board: number[][] = [];
-  for (let i = 0; i < 9; i++) {
-    board[i] = [];
-    for (let j = 0; j < 9; j++) {
-      board[i][j] = puzzle[i][j].value.trim() === '' ? 0 : parseInt(puzzle[i][j].value) 
-    }
-  }
-  return board;
-}
-
 
 /**
  * Chaeck whether the value is valid on the given cell coordinates
@@ -95,4 +84,88 @@ const isValid = (board: number[][] , value: number, x: number, y: number, isNewV
   }
 
   return true;
+}
+let executionCount = 1;
+/**
+ * Solve sudoku values by using backtracking algorithm
+ * @param sudokuValues string values on Sudoku UI grid
+ */
+export const solveSudoku = (board: number[][]) => {
+  if (executionCount > 10000000) {
+    throw new Error('Critical Error! Detected infinite loop or cannot solve the puzzle!');
+  }
+  executionCount++;
+  let nextEmptyCell = findNextEmptyCell(board);
+  if (nextEmptyCell) {
+    const {x, y} = nextEmptyCell;
+    // try 1-9 value one by one
+    for (let i = 1; i < 10; i++) {
+      if (isValid(board, i, x, y, true)) {
+        board[x][y] = i;
+        // Notice the recursive approach here
+        // once the valid value value is filled, we will go into recursion instead of moving to the next cell
+        // the reason is even though the value(k) is valid right now, 
+        // we might end up in the dead end (no valid values) at some cell as we move further
+        // so, we want to check how far we can go with the current value we selected
+        // if we can get to the end, we're happy and just end the algorithm at that point
+        // otherwise, we will need to go back to the current cell and try other values
+        if (solveSudoku(board)) {
+          return true;
+        } else {
+          board[x][y] = 0;
+        }
+      }
+    }
+    return false;
+  } else {
+    return true;
+  }
+}
+
+// find next empty cell in the Sudoku board!
+const findNextEmptyCell = (board: number[][]): ICell | undefined => {
+  let found = false;
+  let emptyCell: ICell | undefined = undefined;
+  for (let x = 0; x < 9; x++) {
+    for (let y = 0; y < 9; y++) {
+      if (board[x][y] === 0) {
+        found = true;
+        emptyCell = {x, y};
+      }
+    }
+    if (found) {
+      break;
+    }
+  }
+  return emptyCell;
+}
+
+
+export const convertToNumericValues = (puzzle: ISudokuBoard): number[][] => {
+  const board: number[][] = [];
+  for (let i = 0; i < 9; i++) {
+    board[i] = [];
+    for (let j = 0; j < 9; j++) {
+      board[i][j] = puzzle[i][j].value.trim() === '' ? 0 : parseInt(puzzle[i][j].value) 
+    }
+  }
+  return board;
+}
+
+
+export const convertToSudokuValues = (
+  board: number[][],
+  orignalValues: ISudokuBoard
+): ISudokuBoard => {
+  const sudokuBoard: ISudokuBoard = [];
+  for (let i = 0; i < 9; i++) {
+    sudokuBoard[i] = [];
+    for (let j = 0; j < 9; j++) {
+      sudokuBoard[i][j] = {
+        mutable: orignalValues[i][j].mutable,
+        value: board[i][j].toString()
+      }
+    }
+  }
+  return sudokuBoard;
 }

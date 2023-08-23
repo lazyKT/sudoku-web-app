@@ -4,12 +4,14 @@ type GameControlProps = {
   handleNumberClick: (n: number) => void;
   handleDeleteClick: () => void;
   handleNewGameClick: () => void;
+  handleGetAnswerClick: () => void;
 }
 
 const GameControl = ({
   handleNumberClick,
   handleDeleteClick,
-  handleNewGameClick
+  handleNewGameClick,
+  handleGetAnswerClick
 }: GameControlProps) => {
 
   const cellStyle = 'flex justify-center items-center border border-slate-600 py-2 rounded cursor-pointer';
@@ -34,7 +36,10 @@ const GameControl = ({
         onClick={handleDeleteClick}>
         Delete
       </div>
-      <div className={`${cellStyle} bg-lime-light col-span-3 text-white border-none hover:bg-lime`}>
+      <div 
+        className={`${cellStyle} bg-lime-light col-span-3 text-white border-none hover:bg-lime`}
+        onClick={handleGetAnswerClick}
+      >
         Get answers
       </div>
       <div

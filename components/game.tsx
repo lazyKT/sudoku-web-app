@@ -1,6 +1,6 @@
 'use client';
 
-import { initEmptySudokuGame, validateSudokuValues } from "@/utils/game-utils";
+import { convertToNumericValues, convertToSudokuValues, initEmptySudokuGame, solveSudoku, validateSudokuValues } from "@/utils/game-utils";
 import { areCellsEqual } from "@/utils/grid-utils";
 import { ICell, ISudokuBoard, ISudokuValue } from "@/utils/type-def";
 import { useRouter } from "next/navigation";
@@ -48,6 +48,14 @@ const Game = ({ puzzle }: IGameProps) => {
     router.refresh();
   }
 
+  const handleGetAnswerClick = () => {
+    if (sudokuValues) {
+      const board: number[][] = convertToNumericValues(sudokuValues);
+      solveSudoku(board);
+      setSudokuValues(convertToSudokuValues(board, sudokuValues));
+    }
+  }
+
   useEffect(() => {
     if (sudokuValues) {
       const { invalidCells: incorrectCells } = validateSudokuValues(sudokuValues);
@@ -81,6 +89,7 @@ const Game = ({ puzzle }: IGameProps) => {
             handleNumberClick={(n: number) => fillValueInSudokuBoard(n.toString())}
             handleDeleteClick={() => fillValueInSudokuBoard(' ')}
             handleNewGameClick={handleNewGameClick}
+            handleGetAnswerClick={handleGetAnswerClick}
           />
           {
             showInstruction && <GameInstruction onDismiss={() => setShowInstruction(!showInstruction)}/>
