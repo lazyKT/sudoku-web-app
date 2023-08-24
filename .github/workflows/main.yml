@@ -1,4 +1,5 @@
-name: Build
+# Pipeline for commits to any branch on github
+name: Main Pipeline
 
 on:
   push:
