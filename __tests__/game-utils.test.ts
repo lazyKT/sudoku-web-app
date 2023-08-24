@@ -4,16 +4,15 @@
 import {
   convertOneLineToSudokuValues,
   isValidForPosition,
-  validateSudokuValues
+  validateSudokuValues,
 } from '../utils/game-utils';
-import { 
-  board1OneLine, 
+import {
+  board1OneLine,
   board2OneLine,
   board3,
   board2OneLineInvalid,
-  board3OneLineInvalid 
+  board3OneLineInvalid,
 } from '../__mocks__/mockGrids';
-
 
 describe('Testing game uitls: validate sudoku values, return invalid cells', () => {
   it('all filled values are valid, expect true', () => {
@@ -40,7 +39,6 @@ describe('Testing game uitls: validate sudoku values, return invalid cells', () 
     expect(got2.invalidCells).toHaveLength(4);
   });
 });
-
 
 describe('Test to check if given value is valid for the position', () => {
   it('has same value on the same row, not valid, return false', () => {

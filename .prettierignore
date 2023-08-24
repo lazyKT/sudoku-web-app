@@ -1,0 +1,11 @@
+# Ignore artifacts
+build
+.next
+.vercel
+.swc
+mocks/
+styles
+*.config.ts
+*.config.js
+.github
+.prettierrc.json

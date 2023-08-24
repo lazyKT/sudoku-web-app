@@ -27,3 +27,5 @@ jobs:
         run: npm run lint
       - name: Component Tests
         run: npm test
+      - name: Check code formatting
+        run: npm run format:check

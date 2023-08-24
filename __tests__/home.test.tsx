@@ -9,15 +9,14 @@ jest.mock('next/navigation', () => ({
       pathname: '',
       query: '',
       asPath: '',
-      push: jest.fn()
-    }
-  }
+      push: jest.fn(),
+    };
+  },
 }));
 
 const useRouter = jest.spyOn(require('next/navigation'), 'useRouter');
 
 describe('Home', () => {
-
   beforeEach(() => {
     useRouter.mockImplementation(() => ({
       useRouter() {
@@ -26,15 +25,14 @@ describe('Home', () => {
           pathname: '/play',
           query: '',
           asPath: '',
-          push: jest.fn()
-        }
-      }
+          push: jest.fn(),
+        };
+      },
     }));
-    render(<Home/>);
+    render(<Home />);
   });
 
   it('renders wihout crashing', () => {
-
     const heading = screen.getByRole('heading', {
       name: /Play Sudoku anywhere/i,
     });
@@ -43,7 +41,6 @@ describe('Home', () => {
   });
 
   it('buttons in the home page', async () => {
-
     const buttons = await screen.findAllByRole('button');
     expect(buttons[0].innerHTML).toBe('Easy');
     expect(buttons[1].innerHTML).toBe('Medium');
@@ -51,4 +48,3 @@ describe('Home', () => {
     expect(buttons[3].innerHTML).toBe('Random');
   });
 });
-

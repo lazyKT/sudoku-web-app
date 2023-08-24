@@ -1,8 +1,7 @@
 import CircularLoader from '@/components/circular-loader';
 
 const Loading = () => {
-  return <CircularLoader/>
-}
-
+  return <CircularLoader />;
+};
 
 export default Loading;

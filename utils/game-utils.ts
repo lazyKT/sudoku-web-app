@@ -2,22 +2,26 @@
  * This file contains fuctions related to Sudoku-game logics
  */
 
-import { ICell, ISudokuBoard, ISudokuValue, SudokuValidationResult } from "./type-def";
+import {
+  ICell,
+  ISudokuBoard,
+  ISudokuValue,
+  SudokuValidationResult,
+} from './type-def';
 
 export const initEmptySudokuGame = (): ISudokuValue[][] => {
   const twoD9x9Array: ISudokuValue[][] = [];
-  for (let i = 0; i < 9; i ++) {
+  for (let i = 0; i < 9; i++) {
     twoD9x9Array[i] = [];
     for (let j = 0; j < 9; j++) {
       twoD9x9Array[i][j] = {
         value: ' ',
-        mutable: true
+        mutable: true,
       };
     }
   }
   return twoD9x9Array;
-}
-
+};
 
 /**
  * * Validate values in the Sudoku board
@@ -33,7 +37,6 @@ export const initEmptySudokuGame = (): ISudokuValue[][] => {
 export const validateSudokuValues = (
   puzzle: ISudokuBoard
 ): SudokuValidationResult => {
-  
   const invalid = new Set<number>();
   const board: number[][] = convertToNumericValues(puzzle);
   // iterate through each cell in the board to validate
@@ -41,18 +44,16 @@ export const validateSudokuValues = (
     for (let j = 0; j < board.length; j++) {
       const value = board[i][j];
       if (value !== 0 && !isValidForPosition(board, value, i, j)) {
-        invalid.add((board.length * i) + j);
+        invalid.add(board.length * i + j);
       }
     }
-    
   }
   const invalidCells = Array.from(invalid);
   return {
     isValid: invalidCells.length === 0,
-    invalidCells
-  }
-}
-
+    invalidCells,
+  };
+};
 
 /**
  * Chaeck whether the value is valid on the given cell coordinates
@@ -63,16 +64,16 @@ export const validateSudokuValues = (
  * @param isNewValue set it to true if you use the function for validation is new value to be added
  */
 export const isValidForPosition = (
-  board: number[][], 
-  value: number, 
-  x: number, 
-  y: number, 
+  board: number[][],
+  value: number,
+  x: number,
+  y: number,
   isNewValue?: boolean
 ): boolean => {
   // check row
   for (let i = 0; i < board.length; i++) {
     if (
-      (isNewValue || i !== y) && board[x][i] === value ||
+      ((isNewValue || i !== y) && board[x][i] === value) ||
       ((isNewValue || i !== x) && board[i][y] === value)
     ) {
       return false;
@@ -83,7 +84,7 @@ export const isValidForPosition = (
   const nonetX = x - (x % 3);
   const nonetY = y - (y % 3);
   for (let i = nonetX; i < nonetX + 3; i++) {
-    for (let j = nonetY; j < nonetY+3; j++) {
+    for (let j = nonetY; j < nonetY + 3; j++) {
       if ((isNewValue || (i !== x && y !== x)) && board[i][j] === value) {
         return false;
       }
@@ -91,7 +92,7 @@ export const isValidForPosition = (
   }
 
   return true;
-}
+};
 let executionCount = 1;
 /**
  * Solve sudoku values by using backtracking algorithm
@@ -99,19 +100,21 @@ let executionCount = 1;
  */
 export const solveSudoku = (board: number[][]) => {
   if (executionCount > 1000000000) {
-    throw new Error('Critical Error! Detected infinite loop or cannot solve the puzzle!');
+    throw new Error(
+      'Critical Error! Detected infinite loop or cannot solve the puzzle!'
+    );
   }
   executionCount++;
   let nextEmptyCell = getNextEmptyCell(board);
   if (nextEmptyCell) {
-    const {x, y} = nextEmptyCell;
+    const { x, y } = nextEmptyCell;
     // try 1-9 value one by one
     for (let i = 1; i < 10; i++) {
       if (isValidForPosition(board, i, x, y, true)) {
         board[x][y] = i;
         // Notice the recursive approach here
         // once the valid value value is filled, we will go into recursion instead of moving to the next cell
-        // the reason is even though the value(k) is valid right now, 
+        // the reason is even though the value(k) is valid right now,
         // we might end up in the dead end (no valid values) at some cell as we move further
         // so, we want to check how far we can go with the current value we selected
         // if we can get to the end, we're happy and just end the algorithm at that point
@@ -127,7 +130,7 @@ export const solveSudoku = (board: number[][]) => {
   } else {
     return true;
   }
-}
+};
 
 // find next empty cell in the Sudoku board!
 export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
@@ -138,7 +141,7 @@ export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
     for (let y = 0; y < n; y++) {
       if (board[x][y] === 0) {
         found = true;
-        emptyCell = {x, y};
+        emptyCell = { x, y };
       }
     }
     if (found) {
@@ -146,8 +149,7 @@ export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
     }
   }
   return emptyCell;
-}
-
+};
 
 export const convertToNumericValues = (puzzle: ISudokuBoard): number[][] => {
   const board: number[][] = [];
@@ -155,12 +157,12 @@ export const convertToNumericValues = (puzzle: ISudokuBoard): number[][] => {
   for (let i = 0; i < n; i++) {
     board[i] = [];
     for (let j = 0; j < n; j++) {
-      board[i][j] = puzzle[i][j].value.trim() === '' ? 0 : parseInt(puzzle[i][j].value) 
+      board[i][j] =
+        puzzle[i][j].value.trim() === '' ? 0 : parseInt(puzzle[i][j].value);
     }
   }
   return board;
-}
-
+};
 
 export const convertToSudokuValues = (
   board: number[][],
@@ -173,26 +175,26 @@ export const convertToSudokuValues = (
     for (let j = 0; j < n; j++) {
       sudokuBoard[i][j] = {
         mutable: orignalValues[i][j].mutable,
-        value: board[i][j].toString()
-      }
+        value: board[i][j].toString(),
+      };
     }
   }
   return sudokuBoard;
-}
+};
 
 // convert one-line value to {value: string, mutable: boolean} array
 export const convertOneLineToSudokuValues = (oneLine: string): ISudokuBoard => {
   const sudokuPuzzle: ISudokuBoard = [];
-  for(let i = 0; i < 9; i++) {
+  for (let i = 0; i < 9; i++) {
     sudokuPuzzle[i] = [];
     for (let j = 0; j < 9; j++) {
-      const idx = (9 * i) + j;
+      const idx = 9 * i + j;
       const value = oneLine[idx];
       sudokuPuzzle[i][j] = {
         value: value === '.' ? ' ' : value,
-        mutable: value === '.'
-      }
+        mutable: value === '.',
+      };
     }
   }
   return sudokuPuzzle;
-}
+};
