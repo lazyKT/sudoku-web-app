@@ -17,22 +17,30 @@ export default function Page() {
       <p className='my-2 text-sm'>Select Difficulty:</p>
       <button 
         onClick={() => startNewGame(1)}
-        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
+        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'
+        data-testid='easy-button'
+      >
         Easy
       </button>
       <button 
         onClick={() => startNewGame(2)}
-        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
+        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'
+        data-testid='medium-button'  
+      >
         Medium
       </button>
       <button 
         onClick={() => startNewGame(3)} 
-        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
+        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'
+        data-testid='hard-button'  
+      >
         Hard
       </button>
       <button 
         onClick={() => startNewGame()} 
-        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'>
+        className='px-4 py-2 m-2 border rounded bg-violet-500 hover:bg-violet-600 shadow-lg shadow-violet-500/50 w-2/5 flex justify-center items-center text-white text-base'
+        data-testid='random-button'
+      >
         Random
       </button>
     </div>
