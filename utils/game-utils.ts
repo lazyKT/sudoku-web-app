@@ -33,23 +33,23 @@ export const initEmptySudokuGame = (): ISudokuValue[][] => {
 export const validateSudokuValues = (
   puzzle: ISudokuBoard
 ): SudokuValidationResult => {
-  const invalidCells: string[] = [];
   
   const invalid = new Set<number>();
   const board: number[][] = convertToNumericValues(puzzle);
   // iterate through each cell in the board to validate
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board.length; j++) {
       const value = board[i][j];
-      if (value !== 0 && !isValid(board, value, i, j)) {
-        invalid.add((9 * i) + j);
+      if (value !== 0 && !isValidForPosition(board, value, i, j)) {
+        invalid.add((board.length * i) + j);
       }
     }
     
   }
+  const invalidCells = Array.from(invalid);
   return {
     isValid: invalidCells.length === 0,
-    invalidCells: Array.from(invalid)
+    invalidCells
   }
 }
 
@@ -60,10 +60,17 @@ export const validateSudokuValues = (
  * @param value new value added to cell
  * @param x x position
  * @param y y postiion
+ * @param isNewValue set it to true if you use the function for validation is new value to be added
  */
-const isValid = (board: number[][] , value: number, x: number, y: number, isNewValue?: boolean): boolean => {
+export const isValidForPosition = (
+  board: number[][], 
+  value: number, 
+  x: number, 
+  y: number, 
+  isNewValue?: boolean
+): boolean => {
   // check row
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < board.length; i++) {
     if (
       (isNewValue || i !== y) && board[x][i] === value ||
       ((isNewValue || i !== x) && board[i][y] === value)
@@ -100,7 +107,7 @@ export const solveSudoku = (board: number[][]) => {
     const {x, y} = nextEmptyCell;
     // try 1-9 value one by one
     for (let i = 1; i < 10; i++) {
-      if (isValid(board, i, x, y, true)) {
+      if (isValidForPosition(board, i, x, y, true)) {
         board[x][y] = i;
         // Notice the recursive approach here
         // once the valid value value is filled, we will go into recursion instead of moving to the next cell
@@ -126,8 +133,9 @@ export const solveSudoku = (board: number[][]) => {
 export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
   let found = false;
   let emptyCell: ICell | undefined = undefined;
-  for (let x = 0; x < 9; x++) {
-    for (let y = 0; y < 9; y++) {
+  const n = board.length;
+  for (let x = 0; x < n; x++) {
+    for (let y = 0; y < n; y++) {
       if (board[x][y] === 0) {
         found = true;
         emptyCell = {x, y};
@@ -143,9 +151,10 @@ export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
 
 export const convertToNumericValues = (puzzle: ISudokuBoard): number[][] => {
   const board: number[][] = [];
-  for (let i = 0; i < 9; i++) {
+  const n = puzzle.length;
+  for (let i = 0; i < n; i++) {
     board[i] = [];
-    for (let j = 0; j < 9; j++) {
+    for (let j = 0; j < n; j++) {
       board[i][j] = puzzle[i][j].value.trim() === '' ? 0 : parseInt(puzzle[i][j].value) 
     }
   }
@@ -157,10 +166,11 @@ export const convertToSudokuValues = (
   board: number[][],
   orignalValues: ISudokuBoard
 ): ISudokuBoard => {
+  const n = board.length;
   const sudokuBoard: ISudokuBoard = [];
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < n; i++) {
     sudokuBoard[i] = [];
-    for (let j = 0; j < 9; j++) {
+    for (let j = 0; j < n; j++) {
       sudokuBoard[i][j] = {
         mutable: orignalValues[i][j].mutable,
         value: board[i][j].toString()
@@ -168,4 +178,21 @@ export const convertToSudokuValues = (
     }
   }
   return sudokuBoard;
+}
+
+// convert one-line value to {value: string, mutable: boolean} array
+export const convertOneLineToSudokuValues = (oneLine: string): ISudokuBoard => {
+  const sudokuPuzzle: ISudokuBoard = [];
+  for(let i = 0; i < 9; i++) {
+    sudokuPuzzle[i] = [];
+    for (let j = 0; j < 9; j++) {
+      const idx = (9 * i) + j;
+      const value = oneLine[idx];
+      sudokuPuzzle[i][j] = {
+        value: value === '.' ? ' ' : value,
+        mutable: value === '.'
+      }
+    }
+  }
+  return sudokuPuzzle;
 }
