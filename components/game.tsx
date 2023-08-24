@@ -12,6 +12,7 @@ import {
 import { areCellsEqual } from "@/utils/grid-utils";
 import { ICell, ISudokuBoard, ISudokuValue } from "@/utils/type-def";
 import { useCallback, useEffect, useState } from "react";
+import CircularLoader from "./circular-loader";
 import GameControl from "./game-control";
 import GameFinishedDialog from "./game-finish-dialog";
 import GameInstruction from "./game-instruction";
@@ -86,6 +87,8 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
           // update game status
           finishGame();
           setShowGameFinishDialog(true);
+          // clear game-progress in local storage
+          localStorage.removeItem('progress');
         }
       }
     }
@@ -124,7 +127,7 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
 
   return (
     <div className='w-full flex flex-wrap justify-center items-center'>
-      { sudokuValues && (
+      { sudokuValues ? (
         <>
           <SudokuGrid 
             activeCell={activeCell} 
@@ -161,6 +164,8 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
             />
           }
         </>
+      ) : (
+        <CircularLoader />
       )}
     </div>
   )

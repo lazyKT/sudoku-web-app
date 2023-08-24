@@ -1,3 +1,4 @@
+import CircularLoader from '@/components/circular-loader';
 import Playground from '@/components/playground';
 import { Suspense } from 'react';
 
@@ -10,7 +11,7 @@ export default async function Page({
 }) {
   return (
     <div className='w-full'>
-      <Suspense fallback={<div>Loading ...</div>}>
+      <Suspense fallback={<CircularLoader />}>
         {/**
          * If you see `'Promise<Element>' is not a valid JSX element` error,
          * please update the version of TypeScript and @types/react to the latest version.

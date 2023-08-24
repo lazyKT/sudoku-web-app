@@ -9,7 +9,7 @@ import { useGameStateContext } from "@/app/context/gameState";
 
 
 const PlaygroundHeader = () => {
-  const {gameState: {gameFinished, startTime, revealedSolution, difficulty}} = useGameStateContext();
+  const {gameState: {gameFinished, startTime, revealedSolution, difficulty, id}} = useGameStateContext();
   const [seconds, setSeconds] = useState<number>(0);
   const [timerStop, setTimerStop] = useState<boolean>(false);
   const intervalFuncRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -34,15 +34,15 @@ const PlaygroundHeader = () => {
     return `${minuteString}:${secondString}`;
   }
 
-  const startTimer = () => {
-    if (intervalFuncRef.current == null) {
+  const startTimer = useCallback(() => {
+    if (intervalFuncRef.current == null && id != null) {
       const intervalFunc: ReturnType<typeof setInterval> = setInterval(() => {
         setSeconds(prev => prev + 1);
       }, 1000);
       intervalFuncRef.current = intervalFunc;
       setTimerStop(false);
     }
-  }
+  }, [id]);
 
   const stopTimer = () => {
     if (intervalFuncRef.current != null) {
@@ -55,16 +55,18 @@ const PlaygroundHeader = () => {
   const restartTimer = useCallback(() => {
     stopTimer();
     startTimer();
-  }, []);
+  }, [startTimer]);
 
   const onClickPausePlayButton = () => {
-    if (timerStop) {
-      // resume timer
-      startTimer();
-    } else {
-      stopTimer();
+    if (id != null) {
+      if (timerStop) {
+        // resume timer
+        startTimer();
+      } else {
+        stopTimer();
+      }
+      setTimerStop(!timerStop);
     }
-    setTimerStop(!timerStop);
   }
 
   useEffect(() => {
@@ -93,16 +95,16 @@ const PlaygroundHeader = () => {
 
 
   useEffect(() => {
-    // start timer when component is mounted for the first time
+    // start timer when component is mounted for the first time if puzzle data is ready
     startTimer();
     return () => {
       // remove timer when component unmount
       stopTimer();
     };
-  }, []);
+  }, [startTimer]);
 
   return (
-    <div className='w-full relative flex justify-between items-center px-2 mb-4'>
+    <div className='w-full max-w-800 relative flex justify-between items-center mb-4 px-2'>
       <div>
         <span className='text-sm'>Difficulty:&nbsp;</span>
         <span className='text-base font-semibold'>{getDifficultyValue()}</span>
@@ -114,7 +116,7 @@ const PlaygroundHeader = () => {
           </div>
         )
       }
-      <div className='w-24 flex items-end'>
+      <div className='w-24 flex items-end justify-end'>
         <span className='text-slate-600 mr-1 text-sm'>{formatTimeToMMSS()}</span>
         <button
           className='cursor pointer'

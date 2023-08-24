@@ -27,6 +27,7 @@ const config: Config = {
         550: '550px',
         450: '450px',
         300: '300px',
+        800: '800px'
       },
       minWidth: {
         300: '300px'
