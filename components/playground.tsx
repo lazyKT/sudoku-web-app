@@ -1,14 +1,10 @@
 import Game from "./game";
 import PlaygroundHeader from "./playground-header";
-import { ISudokuBoard, Puzzle } from '@/utils/type-def';
+import { IPuzzleDataFromSupabase, ISudokuBoard, Puzzle } from '@/utils/type-def';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-type IPuzzleData = {
-  data: ISudokuBoard;
-  difficulty: number;
-}
 
-async function getData(difficulty?: number): Promise<IPuzzleData | undefined> {
+async function getData(difficulty?: number): Promise<IPuzzleDataFromSupabase | undefined> {
   const supabase = createClientComponentClient();
   if (!difficulty) {
     // randomly generate difficulty value(1-3) if not provided
@@ -33,12 +29,12 @@ async function getData(difficulty?: number): Promise<IPuzzleData | undefined> {
         }
       }
     }
-    return { data: sudokuPuzzle, difficulty: puzzle.difficulty};
+    return { data: sudokuPuzzle, difficulty: puzzle.difficulty, id: puzzle.id};
   }
   return undefined;
 }
 
-const fetchPuzzleData = async (difficulty?: string): Promise<IPuzzleData | undefined> => {
+const fetchPuzzleData = async (difficulty?: string): Promise<IPuzzleDataFromSupabase | undefined> => {
   if (difficulty && /^[1-3]$/.test(difficulty)) {
     return getData(parseInt(difficulty));
   } else {
@@ -54,8 +50,8 @@ const Playground = async ({ difficulty }: PlaygroundProps) => {
   const puzzleData = await fetchPuzzleData(difficulty);
   return (
     <div className='flex flex-col flex-wrap items-center w-full'>
-      <PlaygroundHeader difficulty={puzzleData?.difficulty}/>
-      <Game puzzle={puzzleData?.data}/>
+      <PlaygroundHeader/>
+      <Game puzzle={puzzleData?.data} puzzleID={puzzleData?.id} difficulty={puzzleData?.difficulty}/>
     </div>
   )
 }

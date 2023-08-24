@@ -43,7 +43,7 @@ const GameControl = ({
         Solve for me
       </div>
       <div
-        className={`${cellStyle} bg-primary-light col-span-6 text-white border-none hover:bg-primary`}
+        className={`${cellStyle} col-span-6 text-white border-none bg-primary-light hover:bg-primary`}
         onClick={handleNewGameClick}
       >
         New Game

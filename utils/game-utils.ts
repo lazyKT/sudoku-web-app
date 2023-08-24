@@ -95,7 +95,7 @@ export const solveSudoku = (board: number[][]) => {
     throw new Error('Critical Error! Detected infinite loop or cannot solve the puzzle!');
   }
   executionCount++;
-  let nextEmptyCell = findNextEmptyCell(board);
+  let nextEmptyCell = getNextEmptyCell(board);
   if (nextEmptyCell) {
     const {x, y} = nextEmptyCell;
     // try 1-9 value one by one
@@ -123,7 +123,7 @@ export const solveSudoku = (board: number[][]) => {
 }
 
 // find next empty cell in the Sudoku board!
-const findNextEmptyCell = (board: number[][]): ICell | undefined => {
+export const getNextEmptyCell = (board: number[][]): ICell | undefined => {
   let found = false;
   let emptyCell: ICell | undefined = undefined;
   for (let x = 0; x < 9; x++) {

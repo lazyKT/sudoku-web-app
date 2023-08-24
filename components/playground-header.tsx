@@ -1,22 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from "react";
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-
-type PlaygroundHeaderProps = {
-  difficulty?: number,
-}
+import { useGameStateContext } from "@/app/context/gameState";
 
 
-const PlaygroundHeader = ({ difficulty } : PlaygroundHeaderProps) => {
 
+
+const PlaygroundHeader = () => {
+  const {gameState: {gameFinished, startTime, revealedSolution, difficulty}} = useGameStateContext();
   const [seconds, setSeconds] = useState<number>(0);
   const [timerStop, setTimerStop] = useState<boolean>(false);
   const intervalFuncRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const searchParams = useSearchParams()
-  const pathName = usePathname();
 
   const getDifficultyValue = () => {
     switch(difficulty) {
@@ -44,6 +40,7 @@ const PlaygroundHeader = ({ difficulty } : PlaygroundHeaderProps) => {
         setSeconds(prev => prev + 1);
       }, 1000);
       intervalFuncRef.current = intervalFunc;
+      setTimerStop(false);
     }
   }
 
@@ -51,13 +48,14 @@ const PlaygroundHeader = ({ difficulty } : PlaygroundHeaderProps) => {
     if (intervalFuncRef.current != null) {
       clearInterval(intervalFuncRef.current);
       intervalFuncRef.current = null; // unregister interval function
+      setTimerStop(true);
     }
   }
 
-  const restartTimer = () => {
+  const restartTimer = useCallback(() => {
     stopTimer();
     startTimer();
-  }
+  }, []);
 
   const onClickPausePlayButton = () => {
     if (timerStop) {
@@ -77,36 +75,53 @@ const PlaygroundHeader = ({ difficulty } : PlaygroundHeaderProps) => {
   }, [seconds]);
 
   useEffect(() => {
+    // When game state change (i.e, game finished, new game starts), 
+    // restart the timer
     setSeconds(0);
     setTimerStop(false);
-    restartTimer();
+    
+    if (gameFinished) {
+      stopTimer();
+    } else {
+      restartTimer();
+    }
 
     return () => {
       stopTimer();
     }
-  }, [pathName, searchParams]);
+  }, [gameFinished, restartTimer, startTime]);
+
 
   useEffect(() => {
+    // start timer when component is mounted for the first time
     startTimer();
     return () => {
+      // remove timer when component unmount
       stopTimer();
     };
   }, []);
 
   return (
-    <div className='w-full flex justify-between items-center px-2 mb-4'>
+    <div className='w-full relative flex justify-between items-center px-2 mb-4'>
       <div>
         <span className='text-sm'>Difficulty:&nbsp;</span>
         <span className='text-base font-semibold'>{getDifficultyValue()}</span>
       </div>
-      <div className='flex items-end'>
+      {
+        gameFinished && revealedSolution && (
+          <div className='absolute top-0 flex justify-center w-full'>
+            <div className='bg-red-light text-white p-2 text-sm rounded'>You have revealed the solution!</div>
+          </div>
+        )
+      }
+      <div className='w-24 flex items-end'>
         <span className='text-slate-600 mr-1 text-sm'>{formatTimeToMMSS()}</span>
         <button
           className='cursor pointer'
           onClick={onClickPausePlayButton}
         >
           {
-            timerStop
+            (timerStop || gameFinished)
               ? <PlayCircleIcon color='info'/>
               : <PauseCircleIcon color='info'/>
           }
