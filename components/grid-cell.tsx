@@ -26,7 +26,7 @@ const GridCell = ({
   // pre-render grid cells base stylings
   const gridCellStyling = () => {
     const baseStyle =
-      'h-10 border border-slate-600 flex items-center justify-center w-cell outline-0 text-2xl';
+      'h-10 border border-slate-600 flex items-center justify-center w-cell outline-0 text-2xl dark:text-white';
     let additionalStyle = '';
     const { x, y } = position;
     if (x % 3 === 2) {
@@ -72,9 +72,9 @@ const GridCell = ({
           ? '#a0b9c355'
           : '';
       }
-      cellRef.current.style.color = sudokuValue?.mutable
-        ? 'dodgerblue'
-        : 'black';
+      if (sudokuValue?.mutable) {
+        cellRef.current.style.color = ' dodgerblue';
+      }
     }
   }, [active, position, invalidCells, sudokuValue]);
 
