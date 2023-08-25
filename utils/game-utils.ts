@@ -94,10 +94,11 @@ export const isValidForPosition = (
   return true;
 };
 
+// convert the blocking solveSudoku function to asynchronous function
+// by wrapping with promise and timeout
 export const solveSudokuAync = (board: number[][]): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     try {
-      console.log('inside solveSudokuAync');
       setTimeout(() => {
         resolve(solveSudoku(board));
       }, 0);

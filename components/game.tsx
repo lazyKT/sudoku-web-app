@@ -6,13 +6,11 @@ import {
   convertToSudokuValues,
   getNextEmptyCell,
   initEmptySudokuGame,
-  solveSudoku,
   solveSudokuAync,
   validateSudokuValues,
 } from '@/utils/game-utils';
 import { areCellsEqual } from '@/utils/grid-utils';
 import { ICell, ISudokuBoard, ISudokuValue } from '@/utils/type-def';
-import { CircularProgress } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import CircularLoader from './circular-loader';
 import GameControl from './game-control';
@@ -88,7 +86,6 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
       if (sudokuValues && !gameFinished) {
         const board: number[][] = convertToNumericValues(sudokuValues);
         await solveSudokuAync(board);
-        console.log('after solve sudoku async');
         setSudokuValues(convertToSudokuValues(board, sudokuValues));
         // clear game-progress in local storage
         localStorage.removeItem('progress');
@@ -206,7 +203,7 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
             {solutionState.error && (
               <div className="flex flex-col justify-center items-center">
                 <p className="text-red font-bold text-lg">
-                  Sorry! Couldn't get solution!
+                  Sorry! Couldn&apos;t get solution!
                 </p>
                 <button
                   onClick={() => setSolutionState(undefined)}
