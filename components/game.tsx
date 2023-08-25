@@ -7,10 +7,12 @@ import {
   getNextEmptyCell,
   initEmptySudokuGame,
   solveSudoku,
+  solveSudokuAync,
   validateSudokuValues,
 } from '@/utils/game-utils';
 import { areCellsEqual } from '@/utils/grid-utils';
 import { ICell, ISudokuBoard, ISudokuValue } from '@/utils/type-def';
+import { CircularProgress } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import CircularLoader from './circular-loader';
 import GameControl from './game-control';
@@ -28,7 +30,7 @@ type IGameProps = {
 type SolutionState = {
   error: boolean;
   loading: boolean;
-}
+};
 
 const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
   const {
@@ -80,12 +82,13 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
   };
 
   // Handle click action for `Solve for me` Button
-  const handleGetAnswerClick = () => {
+  const handleGetAnswerClick = async () => {
     try {
       setSolutionState({ loading: true, error: false });
       if (sudokuValues && !gameFinished) {
         const board: number[][] = convertToNumericValues(sudokuValues);
-        solveSudoku(board);
+        await solveSudokuAync(board);
+        console.log('after solve sudoku async');
         setSudokuValues(convertToSudokuValues(board, sudokuValues));
         // clear game-progress in local storage
         localStorage.removeItem('progress');
@@ -94,7 +97,7 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
       }
       setSolutionState({ loading: false, error: false });
     } catch (err) {
-      setSolutionState({loading: false, error: true});
+      setSolutionState({ loading: false, error: true });
     }
   };
 
@@ -192,35 +195,30 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
       ) : (
         <CircularLoader />
       )}
-      {
-        (solutionState?.loading || solutionState?.error) && (
-        <div className='absolute top-0 w-screen h-screen flex justify-center items-center bg-semi-transparent'>
-          <div className='py-4 px-8 rounded bg-white'>
-            {
-              solutionState.loading && (
-                <>
-                  <CircularLoader/>
-                  <p className='text-sm text-slate-500'>Getting solution ...</p>
-                </>
-              )
-            }
-            {
-              solutionState.error && (
-                <div className='flex flex-col justify-center items-center'>
-                  <p className='text-red font-bold text-lg'>Sorry! Couldn't get solution!</p>
-                  <button 
-                    onClick={() => setSolutionState(undefined)}
-                    className='my-2 bg-slate-500 px-4 py-2 rounded text-white'
-                  >
-                    Dismis
-                  </button>
-                </div>
-              )
-            }
+      {(solutionState?.loading || solutionState?.error) && (
+        <div className="absolute top-0 w-screen h-screen flex justify-center items-center bg-semi-transparent">
+          <div className="py-4 px-8 rounded bg-white">
+            {solutionState.loading && (
+              <p className="text-sm text-slate-500">
+                Please wait while getting solution ...
+              </p>
+            )}
+            {solutionState.error && (
+              <div className="flex flex-col justify-center items-center">
+                <p className="text-red font-bold text-lg">
+                  Sorry! Couldn't get solution!
+                </p>
+                <button
+                  onClick={() => setSolutionState(undefined)}
+                  className="my-2 bg-slate-500 px-4 py-2 rounded text-white"
+                >
+                  Dismis
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        )
-      }
+      )}
     </div>
   );
 };

@@ -94,6 +94,19 @@ export const isValidForPosition = (
   return true;
 };
 
+export const solveSudokuAync = (board: number[][]): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log('inside solveSudokuAync');
+      setTimeout(() => {
+        resolve(solveSudoku(board));
+      }, 0);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 let executionCount = 1;
 /**
  * Solve sudoku values by using backtracking algorithm
