@@ -25,6 +25,11 @@ type IGameProps = {
   difficulty?: number;
 };
 
+type SolutionState = {
+  error: boolean;
+  loading: boolean;
+}
+
 const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
   const {
     gameState: { gameFinished, revealedSolution },
@@ -39,6 +44,7 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
   const [showNewGameDialog, setShowNewGameDialog] = useState<boolean>(false);
   const [showGameFinishDialog, setShowGameFinishDialog] =
     useState<boolean>(false);
+  const [solutionState, setSolutionState] = useState<SolutionState>();
 
   // get user input either from keyboard or game-control and fill the value in the Sudoku Board
   const fillValueInSudokuBoard = (value: string) => {
@@ -64,6 +70,7 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
     }
   };
 
+  // handle click action for each cell in the grid (Board)
   const handleOnCellClick = (cell: ICell) => {
     if (activeCell == null) {
       setActiveCell(cell);
@@ -72,18 +79,26 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
     }
   };
 
+  // Handle click action for `Solve for me` Button
   const handleGetAnswerClick = () => {
-    if (sudokuValues && !gameFinished) {
-      const board: number[][] = convertToNumericValues(sudokuValues);
-      solveSudoku(board);
-      setSudokuValues(convertToSudokuValues(board, sudokuValues));
-      // clear game-progress in local storage
-      localStorage.removeItem('progress');
-      // update `relavedSolution` property in Game state to true and finish the game
-      updateRevealSolutionStatus();
+    try {
+      setSolutionState({ loading: true, error: false });
+      if (sudokuValues && !gameFinished) {
+        const board: number[][] = convertToNumericValues(sudokuValues);
+        solveSudoku(board);
+        setSudokuValues(convertToSudokuValues(board, sudokuValues));
+        // clear game-progress in local storage
+        localStorage.removeItem('progress');
+        // update `relavedSolution` property in Game state to true and finish the game
+        updateRevealSolutionStatus();
+      }
+      setSolutionState({ loading: false, error: false });
+    } catch (err) {
+      setSolutionState({loading: false, error: true});
     }
   };
 
+  // when user finish the game without clicking on `solve for me` button
   const handleGameFinishSuccess = useCallback(
     (_sudokuValues: ISudokuBoard, _invalidCells: number[]) => {
       if (_invalidCells.length === 0) {
@@ -177,6 +192,35 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
       ) : (
         <CircularLoader />
       )}
+      {
+        (solutionState?.loading || solutionState?.error) && (
+        <div className='absolute top-0 w-screen h-screen flex justify-center items-center bg-semi-transparent'>
+          <div className='py-4 px-8 rounded bg-white'>
+            {
+              solutionState.loading && (
+                <>
+                  <CircularLoader/>
+                  <p className='text-sm text-slate-500'>Getting solution ...</p>
+                </>
+              )
+            }
+            {
+              solutionState.error && (
+                <div className='flex flex-col justify-center items-center'>
+                  <p className='text-red font-bold text-lg'>Sorry! Couldn't get solution!</p>
+                  <button 
+                    onClick={() => setSolutionState(undefined)}
+                    className='my-2 bg-slate-500 px-4 py-2 rounded text-white'
+                  >
+                    Dismis
+                  </button>
+                </div>
+              )
+            }
+          </div>
+        </div>
+        )
+      }
     </div>
   );
 };

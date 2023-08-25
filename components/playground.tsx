@@ -59,11 +59,6 @@ type PlaygroundProps = {
 };
 
 const Playground = async ({ difficulty }: PlaygroundProps) => {
-  console.log('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log(
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
   const puzzleData = await fetchPuzzleData(difficulty);
   return (
     <div className="flex flex-col flex-wrap items-center w-full">

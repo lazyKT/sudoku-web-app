@@ -1,16 +1,16 @@
+**Sudoku web game**
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+`npm install`
+
+Then, run the development server:
+
+`npm run dev`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -18,17 +18,27 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Running Tests
 
-To learn more about Next.js, take a look at the following resources:
+You can run unit and components tests by `npm test` that will run all the tests under `__tests__` folder.
+Alternatively, you can run `npm run test -- --watch` in the watch mode.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Tool used for testing
+- Jest
+- React testing library
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Formatting
 
-## Deploy on Vercel
+`Prettier` is currently used for code formatting and to make sure that all lines of codes in the project would follow the same formatting rule.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Continuous Integration/ Continuous Delivery
+- For CI, `.github/workflows/main.yml` will be run upon every push action to the any branches in the project.
+- `.github/workflows/deploy-preview.yml` will be run upon every push action to the any branches in the project, for deployment of preview version to vercel.
+- `.github/workflows/deploy-production.yml` will be run upon every push action to the *main branch* in the project, for deployment of production version to vercel.
+
+
+## Additional tool used
+- material-ui (For icons)
+- supabase
+- tailwind

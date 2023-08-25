@@ -3,9 +3,10 @@ build
 .next
 .vercel
 .swc
-mocks/
+__mocks__/
 styles
 *.config.ts
 *.config.js
 .github
 .prettierrc.json
+README.md
