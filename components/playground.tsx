@@ -5,12 +5,13 @@ import {
   ISudokuBoard,
   Puzzle,
 } from '@/utils/type-def';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 async function getData(
   difficulty?: number
 ): Promise<IPuzzleDataFromSupabase | undefined> {
-  const supabase = createClientComponentClient();
+  const supabase = createServerComponentClient({ cookies });
   if (!difficulty) {
     // randomly generate difficulty value(1-3) if not provided
     difficulty = Math.floor(Math.random() * 3) + 1;
