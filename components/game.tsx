@@ -85,9 +85,9 @@ const Game = ({ puzzle, puzzleID, difficulty }: IGameProps) => {
   };
 
   const handleGameFinishSuccess = useCallback(
-    (sudokuValues: ISudokuBoard, invalidCells: number[]) => {
-      if (invalidCells.length === 0) {
-        const board: number[][] = convertToNumericValues(sudokuValues);
+    (_sudokuValues: ISudokuBoard, _invalidCells: number[]) => {
+      if (_invalidCells.length === 0) {
+        const board: number[][] = convertToNumericValues(_sudokuValues);
         const emptyCell = getNextEmptyCell(board);
         if (!emptyCell) {
           // show game-finish dialog only when game is not finished yet and reveal solution button is not pressed
